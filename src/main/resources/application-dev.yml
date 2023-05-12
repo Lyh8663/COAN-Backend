@@ -1,0 +1,70 @@
+server:
+  port: 8100
+
+spring:
+  application:
+    name: coan
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://101.34.23.125:3306/coanbase?userSSL=false
+    username: root
+    password: 1013lohoZ!
+    hikari:
+      max-lifetime: 120000
+
+  mail:
+    host: smtp.qq.com            #qq邮箱
+    username: 435851735@qq.com   #寄件人邮箱地址
+    password: nsplbhferhyebjhc   #pop3/smtp服务开启时，附带的授权码
+    default-encoding: utf-8
+    port: 587
+
+  redis:
+    host: 101.34.23.125
+    port: 6379
+    password: 1013loho
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: 100
+    database: 1
+
+
+swagger:
+  enable: true
+  application-name: ${spring.application.name}
+  application-version: 1.0
+  application-description: coanBackend swagger接口文档
+  try-host: http://localhost:${server.port}
+
+#mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+crawler:
+  url:
+    baseUrl: https://www.wiiyul.com
+    marketUrl: /markets/prices/top-cryptocurrency
+    infoUrl: /v2/support/info/announce/listProject
+  news:
+    baseUrl: https://cn.investing.com/news/cryptocurrency-news
+
+  cron:
+    coin: 0/1 * * * * ?
+    sector: 0 0 0/1 * * ?
+    news: 0 30 0,12 * 1/1 ?
+    content: 0 30 0,12 * 1/1 ?
+
+identity:
+  cron:
+    update: 0 0 0 1 1/1 ?
+
+XSuperChain:
+  baseUrl:  https://xuper.baidu.com
+  create: /xasset/horae/v1/create
+  publish: /xasset/horae/v1/publish
+  query: /xasset/horae/v1/query
+  listastbyaddr: /xasset/horae/v1/listastbyaddr
+
