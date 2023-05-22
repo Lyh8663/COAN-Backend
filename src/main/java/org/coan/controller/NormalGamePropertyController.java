@@ -1,6 +1,7 @@
 package org.coan.controller;
 
 import io.swagger.annotations.Api;
+import org.coan.pojo.NormalGameProperty;
 import org.coan.service.NormalGamePropertyService;
 import org.coan.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/5/21 18:06
  */
 @RestController
-@Api("游戏资产相关")
+@Api("普通游戏资产相关")
 @RequestMapping("/normalGameProperty")
 public class NormalGamePropertyController {
 
@@ -20,10 +21,11 @@ public class NormalGamePropertyController {
     NormalGamePropertyService normalGamePropertyService;
 
     /**
-     *  按类型获取游戏资产
+     * 按类型获取游戏资产
+     *
      * @param propertyId 游戏资产种类
-     * @param pageNum 分页页号
-     * @param pageSize 分页大小
+     * @param pageNum    分页页号
+     * @param pageSize   分页大小
      * @return Http状态码
      */
     @GetMapping("/propertyType/{propertyId}")
@@ -34,21 +36,36 @@ public class NormalGamePropertyController {
     }
 
     /**
-     *  交换游戏资产
+     * 交换游戏资产
+     *
      * @param id1 要交换的游戏资产id
      * @param id2 对方的游戏资产id
      * @return
      */
     @PutMapping("/exchange/{id1}/{id2}")
-    public R exchangeNormalGameProper(@PathVariable("id1") String id1,@PathVariable("id2") String id2){
+    public R exchangeNormalGameProper(@PathVariable("id1") String id1, @PathVariable("id2") String id2) {
         boolean flag = normalGamePropertyService.exchangeNormalGameProperty(Integer.valueOf(id1), Integer.valueOf(id2));
-        if(flag){
-            return R.ok().data("data",flag);
-        }else{
+        if (flag) {
+            return R.ok().data("data", flag);
+        } else {
             return R.fail().message("普通游戏资产交换失败");
         }
 
     }
 
-    // TODO 实现邮件发送功能
+    /**
+     * 向被交换者发送邮件
+     *
+     * @param id 普通游戏资产id
+     * @return
+     */
+    @PostMapping("/sendEmail/{id}")
+    public R sendEmailToExchanger(@PathVariable("id") String id) {
+        boolean flag = normalGamePropertyService.sendEmailToExchanger(Integer.valueOf(id));
+        if (flag) {
+            return R.ok().data("data", flag);
+        } else {
+            return R.fail().message(" 请求交换普通游戏资产邮件发送失败");
+        }
+    }
 }
