@@ -3,6 +3,7 @@ package org.coan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 
@@ -10,6 +11,7 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 @EnableScheduling
 @EnableOpenApi
 @EnableWebMvc
+@EnableTransactionManagement
 public class CoanBackEndApplication {
 
     public static void main(String[] args) {

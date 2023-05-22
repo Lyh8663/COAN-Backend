@@ -20,4 +20,7 @@ public interface NormalGamePropertyMapper extends BaseMapper<NormalGameProperty>
 
     @Update("UPDATE tb_normal_game_property_user SET owner_id = #{ownerId} WHERE id = #{id}")
     int updateOwner(Long ownerId, Integer id);
+
+    @Select("SELECT * FROM tb_normal_game_property_user WHERE id = #{id}")
+    NormalGameProperty selectPropertyById(Integer id);
 }
