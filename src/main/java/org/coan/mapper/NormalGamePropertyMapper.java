@@ -23,4 +23,7 @@ public interface NormalGamePropertyMapper extends BaseMapper<NormalGameProperty>
 
     @Select("SELECT * FROM tb_normal_game_property_user WHERE id = #{id}")
     NormalGameProperty selectPropertyById(Integer id);
+
+    @Select("SELECT name from tb_normal_game_property where id=(SELECT property_id FROM tb_normal_game_property_user WHERE id=#{id} )")
+    String queryPropertyName(Integer id);
 }
