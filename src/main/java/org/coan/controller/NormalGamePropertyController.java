@@ -1,11 +1,12 @@
 package org.coan.controller;
 
 import io.swagger.annotations.Api;
-import org.coan.pojo.NormalGameProperty;
 import org.coan.service.NormalGamePropertyService;
 import org.coan.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * @author Nebula
@@ -42,32 +43,44 @@ public class NormalGamePropertyController {
 
     /**
      * 交换游戏资产
-     *
-     * @param id1 要交换的游戏资产id
-     * @param id2 对方的游戏资产id
+     * @param id 要交换的游戏资产请求id
      * @return
      */
-    @RequestMapping("/exchange/{id1}/{id2}")
-    public R exchangeNormalGameProper(@PathVariable("id1") String id1, @PathVariable("id2") String id2) {
-        boolean flag = normalGamePropertyService.exchangeNormalGameProperty(Integer.valueOf(id1), Integer.valueOf(id2));
+    @RequestMapping("/exchange/{id}")
+    public ModelAndView exchangeNormalGameProper(@PathVariable("id") String id) {
+        boolean flag = normalGamePropertyService.exchangeNormalGameProperty(Integer.valueOf(id));
         if (flag) {
-            return R.ok().data("data", flag);
+            return new ModelAndView(new RedirectView("https://www.baidu.com"));//成功页面
+            //return R.ok().data("data", flag);
         } else {
-            return R.fail().message("普通游戏资产交换失败");
+            return new ModelAndView(new RedirectView("https://www.google.com"));//失败
+            //return R.fail().message("普通游戏资产交换失败");
         }
 
     }
 
+    @RequestMapping("/refuse/{id}")
+    public ModelAndView refuseExchangeNormalGameProper(@PathVariable("id") String id) {
+        boolean flag = normalGamePropertyService.refuseExchange(Integer.valueOf(id));
+        if (flag) {
+            return new ModelAndView(new RedirectView("https://www.baidu.com"));//成功页面
+            //return R.ok().data("data", flag);
+        } else {
+            return new ModelAndView(new RedirectView("https://www.google.com"));//失败
+            //return R.fail().message("普通游戏资产交换失败");
+        }
+
+    }
     /**
-     * 向被交换者发送邮件
+     * 向被交换者发送交换请求
      *
      * @param id1 邮件接收方普通游戏资产id
      * @param id2 邮件发送方游戏资产id
      * @return
      */
-    @PostMapping("/sendEmail/{id1}/{id2}")
-    public R sendEmailToExchanger(@PathVariable("id1") String id1, @PathVariable("id2") String id2) {
-        boolean flag = normalGamePropertyService.sendEmailToExchanger(Integer.valueOf(id1),Integer.valueOf(id2));
+    @PostMapping("/requestExchange/{id1}/{id2}")
+    public R requestExchanger(@PathVariable("id1") String id1, @PathVariable("id2") String id2,@RequestParam("comment")String comment) {
+        boolean flag = normalGamePropertyService.requestExchange(Integer.valueOf(id1),Integer.valueOf(id2),comment);
         if (flag) {
             return R.ok().data("data", flag);
         } else {

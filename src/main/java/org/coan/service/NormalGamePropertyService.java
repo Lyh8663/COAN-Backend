@@ -2,8 +2,10 @@ package org.coan.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.coan.mapper.CoanUserMapper;
+import org.coan.mapper.ExchangeRequestMapper;
 import org.coan.mapper.NormalGamePropertyMapper;
 import org.coan.pojo.CoanUser;
+import org.coan.pojo.ExchangeRequest;
 import org.coan.pojo.NormalGameProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,6 +24,8 @@ import javax.mail.internet.MimeMessage;
 public class NormalGamePropertyService {
     @Autowired
     NormalGamePropertyMapper normalGamePropertyMapper;
+    @Autowired
+    ExchangeRequestMapper exchangeRequestMapper;
     @Autowired
     CoanUserMapper coanUserMapper;
     @Autowired(required = false)
@@ -48,32 +52,46 @@ public class NormalGamePropertyService {
     }
 
     @Transactional
-    public boolean exchangeNormalGameProperty(Integer gamePropertyId1, Integer gamePropertyId2) {
-        NormalGameProperty normalGameProperty1 = normalGamePropertyMapper.selectPropertyById(gamePropertyId1);
-        NormalGameProperty normalGameProperty2 = normalGamePropertyMapper.selectPropertyById(gamePropertyId2);
-        int res = 0;
-        res += updateNormalGamePropertiesOwner(normalGameProperty1.getOwnerId(), normalGameProperty2.getId());
-        res += updateNormalGamePropertiesOwner(normalGameProperty2.getOwnerId(), normalGameProperty1.getId());
-        return res == 2 ? true : false;
+    public boolean exchangeNormalGameProperty(Integer id) {
+        ExchangeRequest exchangeRequest = exchangeRequestMapper.selectById(id);
+        int res=0;
+        res+=updateNormalGamePropertiesOwner(exchangeRequest.getReceiverId(),exchangeRequest.getPropertyIdSend());
+        res+=updateNormalGamePropertiesOwner(exchangeRequest.getSenderId(),exchangeRequest.getPropertyIdReceive());
+        exchangeRequest.setIsSuccess(1);
+        res+=exchangeRequestMapper.updateById(exchangeRequest);
+        return res == 3 ? true : false;
     }
 
     @Transactional
-    public boolean sendEmailToExchanger(Integer id1,Integer id2) {
+    public boolean refuseExchange(Integer id) {
+        ExchangeRequest exchangeRequest = exchangeRequestMapper.selectById(id);
+        exchangeRequest.setIsSuccess(-1);
+        int res=exchangeRequestMapper.updateById(exchangeRequest);
+        return res == 1 ? true : false;
+    }
+
+    @Transactional
+    public boolean requestExchange(Integer id1, Integer id2,String comment) {
 
         NormalGameProperty receiverNormalGameProperty = normalGamePropertyMapper.selectPropertyById(id1);
+        NormalGameProperty senderNormalGameProperty = normalGamePropertyMapper.selectPropertyById(id2);
         String receiverPropertyName = normalGamePropertyMapper.queryPropertyName(id1);
-        String posterPropertyName = normalGamePropertyMapper.queryPropertyName(id2);
+        String senderPropertyName = normalGamePropertyMapper.queryPropertyName(id2);
         CoanUser coanUser = coanUserMapper.selectById(receiverNormalGameProperty.getOwnerId());
-
         try {
+            ExchangeRequest exchangeRequest = new ExchangeRequest(id2,id1, senderNormalGameProperty.getOwnerId(), receiverNormalGameProperty.getOwnerId(), 1,0,comment);
+            exchangeRequestMapper.insert(exchangeRequest);
+            int id = exchangeRequest.getId();
             MimeMessage message = sender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message,true);
             mimeMessageHelper.setSubject("COAN平台游戏资产交换请求");//发送邮件的标题
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append("有人向您发出资产交换申请啦！\n");
-            stringBuffer.append("对方愿意用“"+posterPropertyName+"”交换您的“"+receiverPropertyName+"”！\n");
-            stringBuffer.append("点击链接同意请求！(非本人或不同意交换请忽略)");
-            stringBuffer.append("http://localhost:8100/normalGameProperty/exchange/"+id1+"/"+id2);
+            stringBuffer.append("对方愿意用“"+senderPropertyName+"”交换您的“"+receiverPropertyName+"”！\n");
+            stringBuffer.append("点击链接同意请求！(非本人请忽略)");
+            stringBuffer.append("http://localhost:8100/normalGameProperty/exchange/"+id+"\n");
+            stringBuffer.append("点此拒绝请求");
+            stringBuffer.append("http://localhost:8100/normalGameProperty/refuse/"+id+"\n");
             mimeMessageHelper.setText(stringBuffer.toString());
             mimeMessageHelper.setTo(coanUser.getEmail());//收件人
             mimeMessageHelper.setFrom("435851735@qq.com");//寄件人
