@@ -24,4 +24,5 @@ public class NormalGameProperty {
     Integer propertyId;
     Long ownerId;
     BigDecimal amount;
+    String name;
 }

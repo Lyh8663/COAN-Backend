@@ -35,6 +35,11 @@ public class MetaverseGamePropertyService {
     }
 
     @Transactional
+    public NormalGameProperty selectPropertyWithName(Integer id){
+        return metaverseGamePropertyMapper.selectPropertyWithName(id);
+    }
+
+    @Transactional
     public MetaverseGameProperty getNormalGamePropertyById(Integer id){
         return metaverseGamePropertyMapper.selectPropertyById(id);
     }

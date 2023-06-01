@@ -23,4 +23,5 @@ public class MetaverseGameProperty {
     Integer propertyId;
     Long ownerId;
     BigDecimal amount;
+    String name;
 }

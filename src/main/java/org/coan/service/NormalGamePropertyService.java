@@ -33,6 +33,11 @@ public class NormalGamePropertyService {
     }
 
     @Transactional
+    public NormalGameProperty selectPropertyWithName(Integer id){
+        return normalGamePropertyMapper.selectPropertyWithName(id);
+    }
+
+    @Transactional
     public NormalGameProperty getNormalGamePropertyById(Integer id){
         return normalGamePropertyMapper.selectPropertyById(id);
     }

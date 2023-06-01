@@ -35,6 +35,11 @@ public class NormalGamePropertyController {
         return R.ok().data("data", normalGamePropertyService.getNormalGamePropertiesByType(Integer.parseInt(propertyId), pageNum, pageSize));
     }
 
+    @GetMapping("/property/{id}")
+    public R getNormalGamePropertyWithName(@PathVariable("id")String id){
+        return R.ok().data("data",normalGamePropertyService.selectPropertyWithName(Integer.valueOf(id)));
+    }
+
     /**
      * 交换游戏资产
      *

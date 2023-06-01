@@ -19,6 +19,9 @@ public interface MetaverseGamePropertyMapper extends BaseMapper<MetaverseGamePro
     @Select("SELECT * FROM `tb_metaverse_game_property_user` WHERE property_id = #{propertyId}")
     Page<MetaverseGameProperty> selectPropertyByType(Integer propertyId, IPage<NormalGameProperty> page);
 
+    @Select("SELECT * FROM tb_metaverse_game_property_user as pu INNER JOIN tb_metaverse_game_property as p on pu.property_id = p.id WHERE pu.id = #{id} ")
+    NormalGameProperty selectPropertyWithName(Integer id);
+
     @Update("UPDATE tb_metaverse_game_property_user SET owner_id = #{ownerId} WHERE id = #{id}")
     int updateOwner(Long ownerId, Integer id);
 
