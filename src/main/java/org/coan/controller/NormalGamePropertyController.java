@@ -43,7 +43,7 @@ public class NormalGamePropertyController {
 
     /**
      * 交换游戏资产
-     * @param id 要交换的游戏资产请求id
+     * @param id 游戏资产交换请求id
      * @return
      */
     @RequestMapping("/exchange/{id}")
